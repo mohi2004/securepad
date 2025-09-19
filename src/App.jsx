@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-
-
-import LandingPage from "./components/LandingPage.jsx";
-
+import Landingpage from "./components/Landingpage.jsx";
 import PadEditor from "./components/PadEditor.jsx";
 
 export default function App() {
