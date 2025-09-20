@@ -7,7 +7,6 @@ export default function PadEditor({ code, onBack }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Load pad on mount or code change
   useEffect(() => {
     async function loadPadContent() {
       setLoading(true);
@@ -29,7 +28,6 @@ export default function PadEditor({ code, onBack }) {
     loadPadContent();
   }, [code]);
 
-  // Manual save
   async function handleSave() {
     try {
       const encrypted = await encrypt(content, code);
@@ -42,7 +40,6 @@ export default function PadEditor({ code, onBack }) {
     }
   }
 
-  // Auto-save every 2 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
       if (!content) return;
