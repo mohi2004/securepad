@@ -13,15 +13,10 @@ export default function PadEditor({ code, onBack }) {
       setError(null);
       try {
         const encryptedData = await loadPad(code);
-        if (encryptedData) {
-          const decrypted = await decrypt(encryptedData, code);
-          setContent(decrypted);
-        } else {
-          setContent("");
-        }
+        if (encryptedData) setContent(await decrypt(encryptedData, code));
+        else setContent("");
       } catch (e) {
         setError("Failed to load or decrypt. Maybe wrong code?");
-        setContent("");
       }
       setLoading(false);
     }
@@ -51,7 +46,6 @@ export default function PadEditor({ code, onBack }) {
         setError("Failed to auto-save content.");
       }
     }, 2000);
-
     return () => clearInterval(interval);
   }, [content, code]);
 
