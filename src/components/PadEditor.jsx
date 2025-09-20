@@ -7,22 +7,34 @@ export default function PadEditor({ code, onBack }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Load pad on mount or code change
   useEffect(() => {
     async function loadPadContent() {
       setLoading(true);
       setError(null);
       try {
         const encryptedData = await loadPad(code);
-        if (encryptedData) setContent(await decrypt(encryptedData, code));
-        else setContent("");
+        if (encryptedData) {
+          try {
+            const decrypted = await decrypt(encryptedData, code);
+            setContent(decrypted);
+          } catch {
+            setContent("");
+            setError("Failed to decrypt. Pad may be corrupted or code is wrong.");
+          }
+        } else {
+          setContent(""); // New pad
+        }
       } catch (e) {
-        setError("Failed to load or decrypt. Maybe wrong code?");
+        setError("Failed to load pad. Maybe wrong code or network issue?");
+        setContent("");
       }
       setLoading(false);
     }
     loadPadContent();
   }, [code]);
 
+  // Manual save
   async function handleSave() {
     try {
       const encrypted = await encrypt(content, code);
@@ -35,6 +47,7 @@ export default function PadEditor({ code, onBack }) {
     }
   }
 
+  // Auto-save every 2 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
       if (!content) return;
@@ -46,6 +59,7 @@ export default function PadEditor({ code, onBack }) {
         setError("Failed to auto-save content.");
       }
     }, 2000);
+
     return () => clearInterval(interval);
   }, [content, code]);
 
@@ -59,6 +73,8 @@ export default function PadEditor({ code, onBack }) {
       ) : (
         <>
           <textarea
+            id="pad-content"
+            name="pad-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={20}
