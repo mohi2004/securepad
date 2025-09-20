@@ -20,8 +20,12 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET") {
-      const pad = await Pad.findById(id);
-      if (!pad) return res.status(404).json({ error: "Pad not found." });
+      // <-- Replace the old GET block with this
+      let pad = await Pad.findById(id);
+      if (!pad) {
+        // Auto-create new empty pad if it doesn't exist
+        pad = await Pad.create({ _id: id, encrypted: "" });
+      }
       return res.status(200).json(pad);
     }
 
