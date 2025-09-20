@@ -6,24 +6,26 @@ export default async function handler(req, res) {
     await dbConnect();
     const { id } = req.query;
 
+    if (!id) return res.status(400).json({ error: "Missing pad ID." });
+
     if (req.method === "POST") {
       const { encrypted } = req.body;
       if (!encrypted) return res.status(400).json({ error: "Missing encrypted content." });
 
-      await Pad.findOneAndUpdate(
+      const updatedPad = await Pad.findOneAndUpdate(
         { _id: id },
         { encrypted, updatedAt: new Date() },
         { upsert: true, new: true }
       );
 
-      return res.status(200).json({ success: true });
+      return res.status(200).json({ success: true, pad: updatedPad });
     }
 
     if (req.method === "GET") {
-      // <-- Replace the old GET block with this
+      // Try to find the pad
       let pad = await Pad.findById(id);
       if (!pad) {
-        // Auto-create new empty pad if it doesn't exist
+        // Auto-create a new empty pad if it doesn't exist
         pad = await Pad.create({ _id: id, encrypted: "" });
       }
       return res.status(200).json(pad);
