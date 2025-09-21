@@ -47,4 +47,21 @@ app.post("/api/pads", async (req, res) => {
   }
 });
 
+// DELETE pad
+app.delete("/api/pads", async (req, res) => {
+  const { id } = req.body;
+  if (!id) return res.status(400).json({ error: "Missing pad ID." });
+
+  try {
+    const pad = await Pad.findByIdAndDelete(id);
+    if (!pad) return res.status(404).json({ error: "Pad not found." });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+

@@ -45,3 +45,22 @@ export async function savePad(padId, encrypted) {
     throw err;
   }
 }
+
+
+export async function deletePad(padId) {
+  if (!padId) throw new Error("padId is required to delete");
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/pads`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: padId }),
+    });
+
+    if (!res.ok) throw new Error("Failed to delete pad");
+    return res.json();
+  } catch (err) {
+    console.error("Error deleting pad:", err);
+    throw err;
+  }
+}
