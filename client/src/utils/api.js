@@ -1,4 +1,4 @@
-const BASE_URL = "https://securepad-production-f6d4.up.railway.app/"; // Change to your deployed backend URL when live
+const BASE_URL = "https://securepad-production-f6d4.up.railway.app"; // Change to your deployed backend URL when live
 
 // Generate a random 6-character pad ID
 function generatePadId() {
