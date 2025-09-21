@@ -39,12 +39,7 @@ export default function LandingPage({ onLoad }) {
           {loading ? "Loading..." : "Open Pad"}
         </button>
 
-        <button
-          onClick={() => setPadId("")}
-          className="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-gray-700 transition"
-        >
-          Delete Pad
-        </button>
+       
       </div>
     </div>
   );
