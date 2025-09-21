@@ -1,55 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { savePad, loadPad } from "../utils/api.js";
+import React, { useEffect, useState } from "react";
+import { loadPad, savePad } from "../utils/api.js"; // path from components to utils/api.js
 
 export default function PadEditor({ code, onBack }) {
   const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function loadPadContent() {
-      setLoading(true);
-      setError(null);
+    const fetchPad = async () => {
       try {
-        const { encrypted } = await loadPad(code);
-        setContent(encrypted);
-      } catch (e) {
-        setError("Failed to load pad. Maybe wrong code or network issue?");
+        const pad = await loadPad(code);
+        setContent(pad.encrypted || "");
+      } catch (err) {
+        alert("Failed to load pad content.");
+        console.error(err);
       }
-      setLoading(false);
-    }
-    loadPadContent();
+    };
+    fetchPad();
   }, [code]);
 
-  async function handleSave() {
+  const handleSave = async () => {
+    setSaving(true);
     try {
       await savePad(code, content);
-      alert("Pad saved successfully!");
-    } catch (e) {
-      console.error(e);
-      setError("Failed to save pad.");
+      alert("Pad saved!");
+    } catch (err) {
+      alert("Failed to save pad.");
+      console.error(err);
+    } finally {
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <div>
       <button onClick={onBack}>Back</button>
-      {loading ? (
-        <p>Loading pad...</p>
-      ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
-      ) : (
-        <>
-          <textarea
-            rows={20}
-            cols={80}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <br />
-          <button onClick={handleSave}>Save</button>
-        </>
-      )}
+      <h2>Pad: {code}</h2>
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows={15}
+        cols={60}
+      />
+      <button onClick={handleSave} disabled={saving}>
+        {saving ? "Saving..." : "Save"}
+      </button>
     </div>
   );
 }
