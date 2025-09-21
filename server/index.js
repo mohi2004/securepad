@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import dbConnect from "./dbConnect.js";
-import Pad from "./models/Pad.js";
+import dbConnect from "/dbConnect.js";
+import Pad from "/models/Pad.js";
 
 dotenv.config();
 
