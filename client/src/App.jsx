@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./app.css"; // Tailwind
 import LandingPage from "./components/LandingPage.jsx";
 import PadEditor from "./components/PadEditor.jsx";
 
