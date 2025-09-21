@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000"; // Change to your deployed backend URL when live
+const BASE_URL = "https://securepad-two.vercel.app/"; // Change to your deployed backend URL when live
 
 // Generate a random 6-character pad ID
 function generatePadId() {
