@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { loadPad, savePad } from "../utils/api.js";
+import { savePad, deletePad } from "../utils/api.js";
 
 export default function PadEditor({ code, onBack }) {
   const [content, setContent] = useState("");
@@ -31,22 +32,23 @@ export default function PadEditor({ code, onBack }) {
     }
   };
 
-  const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this pad?");
-    if (!confirmDelete) return;
+const handleDelete = async () => {
+  if (!window.confirm("Are you sure you want to delete this pad?")) return;
 
-    setDeleting(true);
-    try {
-      await savePad(code, ""); // Clear pad content on backend
-      setContent("");
-      alert("Pad deleted successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete pad");
-    } finally {
-      setDeleting(false);
-    }
-  };
+  setDeleting(true);
+  try {
+    await deletePad(code); // call delete API
+    setContent("");        // clear local content
+    alert("Pad deleted successfully!");
+    onBack();              // go back to LandingPage
+  } catch (err) {
+    console.error(err);
+    alert("Failed to delete pad: " + err.message);
+  } finally {
+    setDeleting(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-darkbg text-white p-6 flex flex-col gap-6">
