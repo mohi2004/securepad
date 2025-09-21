@@ -19,31 +19,32 @@ export default function LandingPage({ onLoad }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500">
-      <div className="bg-white/90 backdrop-blur-md p-10 rounded-2xl shadow-xl w-full max-w-md text-center">
-        <h1 className="text-4xl font-extrabold mb-6 text-gray-800 tracking-tight">
-          Secure<span className="text-indigo-600">Pad</span>
-        </h1>
+    <div className="min-h-screen bg-darkbg flex flex-col justify-center items-center px-4">
+      <h1 className="text-5xl text-white font-bold mb-8 tracking-wide">SecurePad</h1>
 
-        <input
-          type="text"
-          value={padId}
-          onChange={(e) => setPadId(e.target.value)}
-          placeholder="Enter pad code or leave blank"
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-400 mb-6 text-gray-800"
-        />
+      <input
+        type="text"
+        value={padId}
+        onChange={(e) => setPadId(e.target.value)}
+        placeholder="Enter pad code (or leave blank for new pad)"
+        className="w-full max-w-md p-3 mb-6 rounded-lg border border-gray-600 bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+      />
 
+      <div className="flex gap-4">
         <button
           onClick={handleLoad}
           disabled={loading}
-          className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:opacity-50 transition"
+          className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-indigo-600 transition"
         >
           {loading ? "Loading..." : "Open Pad"}
         </button>
 
-        <p className="mt-6 text-sm text-gray-600">
-          Your notes are private & encrypted
-        </p>
+        <button
+          onClick={() => setPadId("")}
+          className="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-gray-700 transition"
+        >
+          Delete Pad
+        </button>
       </div>
     </div>
   );
