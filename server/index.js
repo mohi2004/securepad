@@ -12,32 +12,27 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-await dbConnect(); // ensure connection is established before handling requests
-console.log("✅ Connected to MongoDB!");
+await dbConnect();
 
-// GET pad by ID (auto-create if not exists)
+// GET pad
 app.get("/api/pads", async (req, res) => {
   const { id } = req.query;
   if (!id) return res.status(400).json({ error: "Missing pad ID." });
 
   try {
     let pad = await Pad.findById(id);
-    if (!pad) {
-      pad = await Pad.create({ _id: id, encrypted: "" });
-      console.log(`🔒 Pad created: ${id}`);
-    }
-    res.status(200).json(pad);
+    if (!pad) pad = await Pad.create({ _id: id, encrypted: "" });
+    res.json(pad);
   } catch (err) {
-    console.error("GET /api/pads error:", err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// POST pad (create or update)
+// POST pad
 app.post("/api/pads", async (req, res) => {
   const { id, encrypted } = req.body;
-  if (!id) return res.status(400).json({ error: "Missing pad ID." });
-  if (typeof encrypted !== "string") return res.status(400).json({ error: "Missing or invalid encrypted content." });
+  if (!id || !encrypted) return res.status(400).json({ error: "Missing pad ID or content." });
 
   try {
     const pad = await Pad.findOneAndUpdate(
@@ -45,10 +40,9 @@ app.post("/api/pads", async (req, res) => {
       { encrypted, updatedAt: new Date() },
       { upsert: true, new: true }
     );
-    console.log(`💾 Pad saved: ${id}`);
-    res.status(200).json({ success: true, pad });
+    res.json({ success: true, pad });
   } catch (err) {
-    console.error("POST /api/pads error:", err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
