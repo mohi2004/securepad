@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { loadPad, savePad } from "../utils/api.js";
-import { savePad, deletePad } from "../utils/api.js";
+import { loadPad, savePad, deletePad } from "../utils/api.js";
+
 
 export default function PadEditor({ code, onBack }) {
   const [content, setContent] = useState("");
