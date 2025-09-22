@@ -1,6 +1,6 @@
 // src/api/pads.js
 
-const BASE_URL = "https://securepad-production-f6d4.up.railway.app"; // Railway backend
+const BASE_URL = "https://securepad-production-f6d4.up.railway.app"; // Railway backend https://securepad-production-f6d4.up.railway.app http://localhost:5000
 
 // Generate a random 6-character pad ID
 function generatePadId() {
@@ -16,13 +16,20 @@ export async function loadPad(padId) {
   try {
     const res = await fetch(`${BASE_URL}/api/pads?id=${id}`);
     if (!res.ok) throw new Error("Failed to fetch pad");
+
     const data = await res.json();
-    return { id, encrypted: data.encrypted || "" };
+
+    return {
+      id,
+      locked: data.locked || false,   // explicitly include locked state
+      encrypted: data.locked ? "" : (data.encrypted || ""), // only return content if unlocked
+    };
   } catch (err) {
     console.error("Error loading pad:", err);
     throw err;
   }
 }
+
 
 /**
  * Save (create or update) a pad’s encrypted content.
@@ -62,4 +69,39 @@ export async function deletePad(padId) {
   }
 
   return res.json();
+}
+
+
+export async function lockPad(padId, password) {
+  if (!padId || !password) throw new Error("Pad ID and password required");
+
+  const res = await fetch(`${BASE_URL}/api/pads/lock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: padId, password }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to lock pad: ${text}`);
+  }
+
+  return res.json();
+}
+
+export async function unlockPad(padId, password) {
+  if (!padId || !password) throw new Error("Pad ID and password required");
+
+  const res = await fetch(`${BASE_URL}/api/pads/unlock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: padId, password }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to unlock pad: ${text}`);
+  }
+
+  return res.json(); // returns { success, locked: false, encrypted }
 }
