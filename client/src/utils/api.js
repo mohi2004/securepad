@@ -1,10 +1,6 @@
 // src/api/pads.js
 
-const BASE_URL =
-  import.meta.env.PROD
-    ? "https://securepad-production-f6d4.up.railway.app"
-    : "http://localhost:5000";
- // Railway backend https://securepad-production-f6d4.up.railway.app http://localhost:5000
+const BASE_URL = "https://securepad-production-f6d4.up.railway.app"; // Railway backend https://securepad-production-f6d4.up.railway.app  http://localhost:5000
 
 // Generate a random 6-character pad ID
 function generatePadId() {
@@ -17,22 +13,16 @@ function generatePadId() {
  */
 export async function loadPad(padId) {
   const id = padId || generatePadId();
-
   try {
     const res = await fetch(`${BASE_URL}/api/pads?id=${id}`);
-
-    if (res.status === 403) {
-      // Pad is locked, return without content
-      return { id, locked: true };
-    }
-
     if (!res.ok) throw new Error("Failed to fetch pad");
 
     const data = await res.json();
+
     return {
       id,
-      encrypted: data.encrypted || "",
-      locked: data.locked || false,
+      locked: data.locked || false,   // explicitly include locked state
+      encrypted: data.locked ? "" : (data.encrypted || ""), // only return content if unlocked
     };
   } catch (err) {
     console.error("Error loading pad:", err);
